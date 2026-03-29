@@ -1,6 +1,8 @@
 package com.mynewapp.ProductCatalog;
 
 import com.mynewapp.ProductCatalog.dto.ProductRequest;
+import com.mynewapp.ProductCatalog.repository.ProductRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +39,9 @@ class ProductCatalogApplicationTests {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@Autowired
+	private ProductRepository productRepository;
+
 	@DynamicPropertySource
 	static void setProperties(DynamicPropertyRegistry dynamicPropertyRegistry){
 		dynamicPropertyRegistry.add("spring.data.mongodb.uri", mongoDBContainer :: getReplicaSetUrl);
@@ -49,6 +54,8 @@ class ProductCatalogApplicationTests {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(productRequestString))
 				.andExpect(status().isCreated());
+
+        Assertions.assertEquals(1, productRepository.findAll().size());
 
 	}
 
